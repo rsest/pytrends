@@ -332,8 +332,9 @@ class TrendReq(object):
             result_dict[kw] = {'top': top_df, 'rising': rising_df}
         return result_dict
 
+    """
     def trending_searches(self, pn='p1'):
-        """Request data from Google's Trending Searches section and return a dataframe"""
+        #Request data from Google's Trending Searches section and return a dataframe
 
         # make the request
         forms = {'ajax': 1, 'pn': pn, 'htd': '', 'htv': 'l'}
@@ -354,7 +355,7 @@ class TrendReq(object):
         return result_df
 
     def top_charts(self, date, cid, geo='US', cat=''):
-        """Request data from Google's Top Charts section and return a dataframe"""
+        #Request data from Google's Top Charts section and return a dataframe
 
         # create the payload
         chart_payload = {'ajax': 1, 'lp': 1, 'geo': geo, 'date': date, 'cat': cat, 'cid': cid}
@@ -367,6 +368,8 @@ class TrendReq(object):
         )['data']['entityList']
         df = pd.DataFrame(req_json)
         return df
+
+    """
 
     def suggestions(self, keyword):
         """Request data from Google's Keyword Suggestion dropdown and return a dictionary"""

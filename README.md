@@ -87,10 +87,6 @@ The following API methods are available:
 
 * [Related Queries](#related-queries): returns data for the related keywords to a provided keyword shown on Google Trends' Related Queries section.
 
-* [Trending Searches](#trending-searches): returns data for latest trending searches shown on Google Trends' Trending Searches section.
-
-* [Top Charts](#top-charts): returns the data for a given topic shown in Google Trends' Top Charts section.
-
 * [Suggestions](#suggestions): returns a list of additional suggested keywords that can be used to refine a trend search.
 
 <sub><sup>[back to top](#api-methods)</sub></sup>
@@ -244,37 +240,6 @@ Returns dictionary of pandas.DataFrames
 
 <sub><sup>[back to top](#related_queries)</sub></sup>
 
-### Trending Searches
-
-	pytrends.trending_searches(pn='p1') # in English
-	pytrends.trending_searches(pn='p4') # in Japanese
-
-Returns pandas.DataFrame
-
-<sub><sup>[back to top](#trending_searches)</sub></sup>
-
-### Top Charts
-
-    pytrends.top_charts(date, cid, geo='US', cat='')
-
-Parameters
-
-* `date`
-
-  - *Required*
-  - YYYYMM integer or string value
-  - Example `'201611'` for November 2016 Top Chart data
-
-* `cid`
-
-  - *Required*
-  - Topic to get data for
-  - Only able to choose from those listed on https://www.google.com/trends/topcharts
-  - Example the chart 'Baseketball players `cid` is `'basketball_players'`
-
-Returns pandas.DataFrame
-
-<sub><sup>[back to top](#top_charts)</sub></sup>
 
 ### Suggestions
 
