@@ -56,7 +56,8 @@ or if you want to use proxies as you are blocked due to Google rate limit:
 
     pytrends = TrendReq(hl='en-US', tz=360, proxies = {'https': 'https://34.203.233.13:80'})
 
-Note: only https proxies will work, and you need to add the port number after the proxy ip address
+- Note: the parameter `hl` specifies host language for accessing Google Trends. 
+- Note: only https proxies will work, and you need to add the port number after the proxy ip address		 Note: only https proxies will work, and you need to add the port number after the proxy ip address
 
 ### Build Payload
     kw_list = ["Blockchain"]
@@ -132,8 +133,9 @@ Many API methods use the following:
 
 * `tz`
 
-  - Timezone Offset
-  - For example US CST is ```'360'```
+  - Timezone Offset (in minutes)
+  - For more information of Timezone Offset, [view this wiki page containing about UCT offset](https://en.wikipedia.org/wiki/UTC_offset)
+  - For example US CST is ```'360'``` 
 
 * `timeframe`
 

@@ -48,8 +48,8 @@ class TrendReq(object):
         self.hl = hl
         self.geo = geo
         self.kw_list = list()
-        self.proxies = proxies #add a proxy option
-        #proxies format: {"http": "http://192.168.0.1:8888" , "https": "https://192.168.0.1:8888"}
+        self.proxies = proxies  # add a proxy option
+        # proxies format: {"http": "http://192.168.0.1:8888" , "https": "https://192.168.0.1:8888"}
         self.cookies = dict(filter(
             lambda i: i[0] == 'NID',
             requests.get(
@@ -88,7 +88,7 @@ class TrendReq(object):
         # but occasionally it sends 'application/javascript
         # and sometimes even 'text/javascript
         if 'application/json' in response.headers['Content-Type'] or \
-            'application/javascript' in response.headers['Content-Type'] or \
+                'application/javascript' in response.headers['Content-Type'] or \
                 'text/javascript' in response.headers['Content-Type']:
 
             # trim initial characters
@@ -211,9 +211,9 @@ class TrendReq(object):
             self.interest_by_region_widget['request']['resolution'] = resolution
         elif self.geo == 'US' and resolution in ['DMA', 'CITY', 'REGION']:
             self.interest_by_region_widget['request']['resolution'] = resolution
-            
+
         self.interest_by_region_widget['request']['includeLowSearchVolumeGeos'] = inc_low_vol
-        
+
         # convert to string as requests will mangle
         region_payload['req'] = json.dumps(self.interest_by_region_widget['request'])
         region_payload['token'] = self.interest_by_region_widget['token']
@@ -236,7 +236,7 @@ class TrendReq(object):
         result_df = df['value'].apply(lambda x: pd.Series(str(x).replace('[', '').replace(']', '').split(',')))
         if inc_geo_code:
             result_df['geoCode'] = df['geoCode']
-            
+
         # rename each column with its search term
         for idx, kw in enumerate(self.kw_list):
             result_df[kw] = result_df[idx].astype('int')
@@ -277,15 +277,15 @@ class TrendReq(object):
                 # in case no top topics are found, the lines above will throw a KeyError
                 df_top = None
 
-            #rising topics
+            # rising topics
             try:
                 rising_list = req_json['default']['rankedList'][1]['rankedKeyword']
-                df_rising = pd.DataFrame([nested_to_record(d, sep='_')  for d in rising_list])
+                df_rising = pd.DataFrame([nested_to_record(d, sep='_') for d in rising_list])
             except KeyError:
                 # in case no rising topics are found, the lines above will throw a KeyError
                 df_rising = None
 
-            result_dict[kw] = {'rising': df_rising, 'top' : df_top}
+            result_dict[kw] = {'rising': df_rising, 'top': df_top}
         return result_dict
 
     def related_queries(self):
@@ -389,14 +389,15 @@ class TrendReq(object):
         params = {'hl': self.hl}
 
         req_json = self._get_data(
-                url=TrendReq.CATEGORIES_URL,
-                params=params,
-                method=TrendReq.GET_METHOD,
-                trim_chars=5
+            url=TrendReq.CATEGORIES_URL,
+            params=params,
+            method=TrendReq.GET_METHOD,
+            trim_chars=5
         )
         return req_json
 
-    def get_historical_interest(self, keywords, year_start=2018, month_start=1, day_start=1, hour_start=0, year_end=2018, month_end=2, day_end=1, hour_end= 0, cat=0, geo='', gprop='', sleep=0):
+    def get_historical_interest(self, keywords, year_start=2018, month_start=1, day_start=1, hour_start=0,
+                                year_end=2018, month_end=2, day_end=1, hour_end=0, cat=0, geo='', gprop='', sleep=0):
         """Gets historical hourly data for interest by chunking requests to 1 week at a time (which is what Google allows)"""
 
         # construct datetime obejcts - raises ValueError if invalid parameters
@@ -404,27 +405,30 @@ class TrendReq(object):
         end_date = datetime(year_end, month_end, day_end, hour_end)
 
         # the timeframe has to be in 1 week intervals or Google will reject it
-        delta = timedelta(days=7)
+        delta = timedelta(days=31)
 
         df = pd.DataFrame()
 
         date_iterator = start_date
-        date_iterator += delta
+        date_iterator += delta - timedelta(hours=1)
 
-        while True:
-            if (date_iterator > end_date):
-                # has retrieved all of the data
-                break
-
+        done = False
+        while not done:
             # format date to comply with API call
-            start_date_str = start_date.strftime('%Y-%m-%dT%H')
-            date_iterator_str = date_iterator.strftime('%Y-%m-%dT%H')
+            start_date_str = start_date.strftime('%Y-%m-%d')  # T%H')
+            date_iterator_str = date_iterator.strftime('%Y-%m-%d')  # T%H')
             tf = start_date_str + ' ' + date_iterator_str
 
             try:
-                self.build_payload(keywords,cat, tf, geo, gprop)
+                self.build_payload(keywords, cat, tf, geo, gprop)
                 week_df = self.interest_over_time()
+                if (date_iterator >= end_date):
+                    done = True
+                    # Cut down results to only go up to end date.
+                    end_date_str = end_date.strftime('%Y-%m-%d')
+                    week_df = week_df[:end_date_str]
                 df = df.append(week_df)
+
             except Exception as e:
                 print(e)
                 pass
