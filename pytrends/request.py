@@ -2,13 +2,12 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import json
 import sys
+import time
+from datetime import datetime, timedelta
 
-from pandas.io.json.normalize import nested_to_record
 import pandas as pd
 import requests
-
-from datetime import datetime, timedelta
-import time
+from pandas.io.json.normalize import nested_to_record
 
 from pytrends import exceptions
 
