@@ -9,12 +9,12 @@ with io.open(os.path.join(dir, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='pytrends',
-    version='4.5.1',
+    version='4.6.0',
     description='Pseudo API for Google Trends',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/dreyco676/pytrends',
-    author=['John Hogue', 'Burton DeWilde'],
+    url='https://github.com/rodrigosestari/pytrends',
+    author=['John Hogue', 'Burton DeWilde', 'Rodrigo Sestari'],
     author_email='dreyco676@gmail.com',
     license='Apache 2.0',
     classifiers=[
@@ -26,8 +26,8 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'License :: OSI Approved :: MIT License'
-        ],
-    install_requires=["requests", "pandas", 'lxml','nose'],
+    ],
+    install_requires=["requests", "pandas", 'lxml', 'nose'],
     keywords='google trends api search',
     packages=['pytrends'],
 )

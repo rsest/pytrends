@@ -22,8 +22,8 @@ Allows simple interface for automating downloading of reports from Google Trends
     * [Interest by Region](#interest-by-region)
     * [Related Topics](#related-topics)
     * [Related Queries](#related-queries)
-    * [Trending Searches](#trending-searches)
-    * [Top Charts](#top-charts)
+    * [Real Time Trends](#realtime-trends)
+    * [Daily Trends](#daily-trends)
     * [Suggestions](#suggestions)
 
   * [Caveats](#caveats)
@@ -87,7 +87,12 @@ The following API methods are available:
 
 * [Related Queries](#related-queries): returns data for the related keywords to a provided keyword shown on Google Trends' Related Queries section.
 
+* [Real Time Trends](#realtime-trends): returns data related at real time trends' Real Time Trends section.
+
+* [Daily Trends](#daily-trends): returns the data related at daily search trends' Daily Trends section.
+
 * [Suggestions](#suggestions): returns a list of additional suggested keywords that can be used to refine a trend search.
+
 
 <sub><sup>[back to top](#api-methods)</sub></sup>
 
@@ -239,6 +244,25 @@ Returns dictionary of pandas.DataFrames
 Returns dictionary of pandas.DataFrames
 
 <sub><sup>[back to top](#related_queries)</sub></sup>
+
+
+### Real Time Trends
+
+	pytrends.trending_realtime hl='en-US', tz=360, cat='all', geo='US')
+
+
+Returns pandas.DataFrame
+
+<sub><sup>[back to top](#realtime-trends)</sub></sup>
+
+### Daily Trends
+
+    pytrends.top_daily(geo='US')
+
+
+Returns pandas.DataFrame
+
+<sub><sup>[back to top](#daily-trends)</sub></sup>
 
 
 ### Suggestions
