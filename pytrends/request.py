@@ -29,8 +29,8 @@ class TrendReq(object):
     INTEREST_OVER_TIME_URL = 'https://trends.google.com/trends/api/widgetdata/multiline'
     INTEREST_BY_REGION_URL = 'https://trends.google.com/trends/api/widgetdata/comparedgeo'
     RELATED_QUERIES_URL = 'https://trends.google.com/trends/api/widgetdata/relatedsearches'
-    TRENDING_SEARCHES_URL = 'https://trends.google.com/trends/hottrends/hotItems'
-    TOP_CHARTS_URL = 'https://trends.google.com/trends/topcharts/chart'
+    TOP_DAILY_URL = 'https://trends.google.com/trends/api/dailytrends'
+    TRENDING_REALTIME_URL = 'https://trends.google.com/trends/api/realtimetrends'
     SUGGESTIONS_URL = 'https://trends.google.com/trends/api/autocomplete/'
     CATEGORIES_URL = 'https://trends.google.com/trends/api/explore/pickers/category'
 
@@ -332,44 +332,46 @@ class TrendReq(object):
             result_dict[kw] = {'top': top_df, 'rising': rising_df}
         return result_dict
 
-    """
-    def trending_searches(self, pn='p1'):
-        #Request data from Google's Trending Searches section and return a dataframe
+    def trending_realtime(self, hl='en-US', tz=360, cat='all', geo='US'):
+        # Request data from Google's Trending Searches section and return a dataframe
 
         # make the request
-        forms = {'ajax': 1, 'pn': pn, 'htd': '', 'htv': 'l'}
+        forms = {'hl': hl, 'tz': tz, 'cat': cat, 'geo': geo, 'fi': 0, 'fs': 0, 'ri': 300, 'rs': 20}
         req_json = self._get_data(
-            url=TrendReq.TRENDING_SEARCHES_URL,
-            method=TrendReq.POST_METHOD,
-            data=forms,
-        )['trendsByDateList']
-        result_df = pd.DataFrame()
+            url=TrendReq.TRENDING_REALTIME_URL,
+            method=TrendReq.GET_METHOD,
+            trim_chars=5,
+            params=forms
+        )["storySummaries"]['trendingStories']
 
         # parse the returned json
-        sub_df = pd.DataFrame()
-        for trenddate in req_json:
-            sub_df['date'] = trenddate['date']
-            for trend in trenddate['trendsList']:
-                sub_df = sub_df.append(trend, ignore_index=True)
-        result_df = pd.concat([result_df, sub_df])
+        sub_df = []
+        for trend in req_json:
+            sub_df.append(trend['title'])
+        result_df = pd.DataFrame(sub_df)
         return result_df
 
-    def top_charts(self, date, cid, geo='US', cat=''):
-        #Request data from Google's Top Charts section and return a dataframe
+    def top_daily(self, geo='US'):
+        # Request data from Google's Top Daily section and return a dataframe
 
         # create the payload
-        chart_payload = {'ajax': 1, 'lp': 1, 'geo': geo, 'date': date, 'cat': cat, 'cid': cid}
+        chart_payload = {'geo': geo}
 
         # make the request and parse the returned json
         req_json = self._get_data(
-            url=TrendReq.TOP_CHARTS_URL,
-            method=TrendReq.POST_METHOD,
+            url=TrendReq.TOP_DAILY_URL,
+            method=TrendReq.GET_METHOD,
+            trim_chars=5,
             params=chart_payload,
-        )['data']['entityList']
-        df = pd.DataFrame(req_json)
-        return df
+        )['default']['trendingSearchesDays']
 
-    """
+        # parse the returned json
+        sub_df = []
+        for trend_day in req_json:
+            for trend in trend_day['trendingSearches']:
+                sub_df.append((trend_day['date'], trend['title']['query']))
+        df = pd.DataFrame(sub_df)
+        return df
 
     def suggestions(self, keyword):
         """Request data from Google's Keyword Suggestion dropdown and return a dictionary"""
