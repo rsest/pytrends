@@ -248,7 +248,7 @@ Returns dictionary of pandas.DataFrames
 
 ### Real Time Trends
 
-	pytrends.trending_realtime hl='en-US', tz=360, cat='all', geo='US')
+	pytrends.trending_realtime(hl='en-US', tz=360, cat='all', geo='US')
 
 
 Returns pandas.DataFrame
