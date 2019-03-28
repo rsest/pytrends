@@ -69,12 +69,8 @@ class TestTrendReq(TestCase):
 
         # Retrieve terms individually so their popularity values aren't relative to each other!
         for k in kw[1:]:
-            print('Retreiving', k, '...')
             dfnew1 = pytrend.get_historical_interest([k], year_start=2018, month_start=5, day_start=18, year_end=2019,
                                                      month_end=1, day_end=5, sleep=1)
             df[k] = dfnew1[k]
-            print('Done with', k)
-        print(df.head())
-        print(df.tail())
 
         self.assertIsNotNone(df)
