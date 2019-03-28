@@ -1,20 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import json
-import sys
 import time
 from datetime import datetime, timedelta
+from urllib.parse import quote
 
 import pandas as pd
 import requests
 from pandas.io.json.normalize import nested_to_record
 
 from pytrends import exceptions
-
-if sys.version_info[0] == 2:  # Python 2
-    from urllib import quote
-else:  # Python 3
-    from urllib.parse import quote
 
 
 class TrendReq(object):
@@ -113,11 +108,12 @@ class TrendReq(object):
             'tz': self.tz,
             'req': {'comparisonItem': [], 'category': cat, 'property': gprop}
         }
-
-        # build out json for each keyword
-        for kw in self.kw_list:
-            keyword_payload = {'keyword': kw, 'time': timeframe, 'geo': self.geo}
-            self.token_payload['req']['comparisonItem'].append(keyword_payload)
+        if len(kw_list) > 0:
+            # build out json for each keyword
+            for kw in self.kw_list:
+                self.token_payload['req']['comparisonItem'].append({'keyword': kw, 'time': timeframe, 'geo': self.geo})
+        else:
+            self.token_payload['req']['comparisonItem'].append({'time': timeframe, 'geo': self.geo})
         # requests will mangle this if it is not a string
         self.token_payload['req'] = json.dumps(self.token_payload['req'])
         # get tokens
@@ -255,7 +251,11 @@ class TrendReq(object):
         result_dict = dict()
         for request_json in self.related_topics_widget_list:
             # ensure we know which keyword we are looking at rather than relying on order
-            kw = request_json['request']['restriction']['complexKeywordsRestriction']['keyword'][0]['value']
+            if request_json['request']['restriction'].get("complexKeywordsRestriction") is not None:
+                kw = request_json['request']['restriction']['complexKeywordsRestriction']['keyword'][0]['value']
+            else:
+                kw = ""
+
             # convert to string as requests will mangle
             related_payload['req'] = json.dumps(request_json['request'])
             related_payload['token'] = request_json['token']
@@ -299,7 +299,11 @@ class TrendReq(object):
         result_dict = dict()
         for request_json in self.related_queries_widget_list:
             # ensure we know which keyword we are looking at rather than relying on order
-            kw = request_json['request']['restriction']['complexKeywordsRestriction']['keyword'][0]['value']
+            if request_json['request']['restriction'].get("complexKeywordsRestriction") is not None:
+                kw = request_json['request']['restriction']['complexKeywordsRestriction']['keyword'][0]['value']
+            else:
+                kw = ""
+
             # convert to string as requests will mangle
             related_payload['req'] = json.dumps(request_json['request'])
             related_payload['token'] = request_json['token']
